@@ -20,7 +20,7 @@ jobs:
       (startsWith(github.head_ref, 'story/') ||
        startsWith(github.head_ref, 'feat/') ||
        startsWith(github.head_ref, 'refactor/'))
-    runs-on: macos-15
+    runs-on: ${{ vars.IOS_RUNNER || 'macos-15-intel' }}
     timeout-minutes: 360
     env:
       XCODE_PATH: /Applications/Xcode_26.3.app/Contents/Developer
@@ -79,6 +79,11 @@ jobs:
 
       - name: Select the public runner toolchain
         run: |
+          if [ ! -d "$XCODE_PATH" ]; then
+            XCODE_PATH="$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)/Contents/Developer"
+            echo "XCODE_PATH=$XCODE_PATH" >> "$GITHUB_ENV"
+          fi
+          echo "Using $XCODE_PATH"
           sudo xcode-select --switch "$XCODE_PATH"
           xcodebuild -downloadComponent MetalToolchain
           metal_toolchain="$(xcodebuild -showComponent MetalToolchain | awk -F': ' '/Toolchain Identifier/ { print $2 }')"
