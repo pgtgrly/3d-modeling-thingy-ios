@@ -659,6 +659,7 @@ void BPY_python_start(bContext *C, int argc, const char **argv)
 
 #ifndef WITH_PYTHON_MODULE
 #  ifdef BLENDER_PYTHON_PLATFORM_HEADER
+  BPY_platform_register();
   BPY_platform_import_smoke();
 #  endif
 

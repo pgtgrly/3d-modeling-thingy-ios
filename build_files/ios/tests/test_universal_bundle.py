@@ -26,11 +26,14 @@ class UniversalBundlePlistTests(unittest.TestCase):
         with PRODUCT_INFO_PLIST.open("rb") as handle:
             cls.plist = plistlib.load(handle)
 
-    def test_bundle_id_is_the_single_ios_product(self) -> None:
+    def test_bundle_identity_comes_from_the_build_settings(self) -> None:
         self.assertEqual(
             self.plist["CFBundleIdentifier"],
-            "org.blenderfoundation.blender.ios",
+            "${MACOSX_BUNDLE_GUI_IDENTIFIER}",
         )
+
+        self.assertEqual(self.plist["CFBundleDisplayName"], "${MACOSX_BUNDLE_BUNDLE_NAME}")
+        self.assertTrue(self.plist["NSLocalNetworkUsageDescription"])
 
     def test_declares_iphone_and_ipad_device_families(self) -> None:
         families = {int(value) for value in self.plist["UIDeviceFamily"]}

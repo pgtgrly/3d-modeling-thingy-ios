@@ -20,6 +20,30 @@ inline PyStatus BPY_platform_configure_executable(PyConfig &config)
   return PyConfig_SetBytesString(&config, &config.executable, BKE_appdir_program_path());
 }
 
+extern "C" void GHOST_iosFarmSetActive(bool active);
+
+inline PyObject *bpy_ios_farm_set_active(PyObject * /*self*/, PyObject *value)
+{
+  if (!PyBool_Check(value)) {
+    PyErr_SetString(PyExc_TypeError, "expected a boolean");
+    return nullptr;
+  }
+  GHOST_iosFarmSetActive(value == Py_True);
+  Py_RETURN_NONE;
+}
+
+inline void BPY_platform_register()
+{
+  static PyMethodDef methods[] = {
+      {"_ios_farm_set_active", bpy_ios_farm_set_active, METH_O, nullptr},
+      {nullptr, nullptr, 0, nullptr},
+  };
+  PyObject *module = PyImport_AddModule("_bpy");
+  if (module == nullptr || PyModule_AddFunctions(module, methods) < 0) {
+    PyErr_Print();
+  }
+}
+
 inline void BPY_platform_import_smoke()
 {
   if (BLI_getenv("BLENDER_IOS_PYTHON_SMOKE") == nullptr) {

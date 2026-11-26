@@ -27,7 +27,7 @@ EXPECTED_DEVICE_FAMILIES = {1, 2}
 IPA_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
 
 
-def metadata_findings(bundle: Path) -> list[Finding]:
+def metadata_findings(bundle: Path, expected_id: str = EXPECTED_BUNDLE_ID) -> list[Finding]:
     plist_path = bundle / "Info.plist"
     try:
         with plist_path.open("rb") as handle:
@@ -36,11 +36,11 @@ def metadata_findings(bundle: Path) -> list[Finding]:
         return [Finding("IPA-PLIST", f"cannot load Info.plist: {ex}", str(plist_path))]
 
     findings: list[Finding] = []
-    if plist.get("CFBundleIdentifier") != EXPECTED_BUNDLE_ID:
+    if plist.get("CFBundleIdentifier") != expected_id:
         findings.append(
             Finding(
                 "IPA-BUNDLE-ID",
-                f"expected {EXPECTED_BUNDLE_ID}",
+                f"expected {expected_id}",
                 str(plist_path),
             )
         )
@@ -123,6 +123,7 @@ def parse_arguments(argv: Sequence[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("bundle", type=Path)
     parser.add_argument("output", type=Path)
+    parser.add_argument("--bundle-id", default=EXPECTED_BUNDLE_ID, help="expected configured app identity")
     return parser.parse_args(argv)
 
 
@@ -131,7 +132,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     bundle = arguments.bundle.resolve()
     output = arguments.output.resolve()
     findings = audit_bundle(bundle, "device-unsigned", ())
-    findings.extend(metadata_findings(bundle))
+    findings.extend(metadata_findings(bundle, arguments.bundle_id))
 
     plist_path = bundle / "Info.plist"
     try:
