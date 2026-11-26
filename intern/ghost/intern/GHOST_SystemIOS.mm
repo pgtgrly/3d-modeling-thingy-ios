@@ -9,6 +9,7 @@
 #include "GHOST_SystemIOS.hh"
 
 #include "GHOST_ContextIOS.hh"
+#include "GHOST_IOSFarm.hh"
 #include "GHOST_IOSVirtualPointer.hh"
 #include "GHOST_WindowIOS.hh"
 
@@ -135,7 +136,7 @@ static BOOL IOS_open_document_url(NSURL *url)
   g_active_window_scene = (UIWindowScene *)scene;
   if (!g_blender_started) {
     g_blender_started = true;
-    main_ios_callback(argc, argv);
+    GHOST_IOS_farmLaunch(argc, argv, main_ios_callback);
   }
 
   for (UIOpenURLContext *context in connectionOptions.URLContexts) {

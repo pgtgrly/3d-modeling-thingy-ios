@@ -20,11 +20,15 @@
     </dict>
   </array>
   <key>CFBundleIdentifier</key>
-  <string>org.blenderfoundation.blender.ios</string>
+  <string>${MACOSX_BUNDLE_GUI_IDENTIFIER}</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundleName</key>
-  <string>Blender</string>
+  <string>${MACOSX_BUNDLE_BUNDLE_NAME}</string>
+  <key>CFBundleDisplayName</key>
+  <string>${MACOSX_BUNDLE_BUNDLE_NAME}</string>
+  <key>NSLocalNetworkUsageDescription</key>
+  <string>Connect to your farm server and receive Blender commands from your computer.</string>
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>CFBundleShortVersionString</key>
